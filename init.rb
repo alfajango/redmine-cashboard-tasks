@@ -1,3 +1,5 @@
+require 'cashboard_tasks'
+
 Redmine::Plugin.register :cashboard_tasks do
   name 'Cashboard Tasks plugin'
   author 'Steve Schwartz'

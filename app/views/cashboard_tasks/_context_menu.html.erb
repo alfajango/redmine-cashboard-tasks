@@ -1,0 +1,7 @@
+<% if @issue.present? %>
+  <li><%= context_menu_link "Add to Cashboard", new_cashboard_task_path(:ids => [@issue.id]),
+    :class => 'icon-cashboard' %></li>
+<% else %>
+  <li><%= context_menu_link "Add to Cashboard", new_cashboard_task_path(:ids => @issue_ids),
+    :class => 'icon-cashboard' %></li>
+<% end %>

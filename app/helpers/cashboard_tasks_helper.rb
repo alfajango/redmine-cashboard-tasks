@@ -1,0 +1,2 @@
+module CashboardTasksHelper
+end
