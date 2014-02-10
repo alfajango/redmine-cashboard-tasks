@@ -102,6 +102,11 @@ $(document).on('change', '#cashboard_project_id', function(){
   }
 });
 
+$(document).on('change', '#cashboard_project_list_id', function(){
+  var $this = $(this), projectListId = $this.val();
+  updateCashboardLineItems(projectListId);
+});
+
 $(document).on('click', '#add-cashboard-project-select', function(){
   var $this = $(this),
       $select = $('[data-project-id]');
