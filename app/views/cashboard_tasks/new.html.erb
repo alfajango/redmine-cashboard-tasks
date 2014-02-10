@@ -14,6 +14,12 @@
     <legend>Cashboard Target</legend>
 
     <div class="splitcontentleft">
+    <% if @issues.size > 1 %>
+      <p>
+        <label for="cashboard_as_combined_line_item">Add issues as combined Cashboard Task</label>
+        <%= check_box_tag(:cashboard_as_combined_line_item) %>
+      </p>
+    <% end %>
     <p>
       <label for="cashboard_project_id">Saved Cashboard Project</label>
       <%= hidden_field_tag(:cashboard_project_id, @cashboard_project.try(:cashboard_project_id), :'data-saved-project-id' => true) %>

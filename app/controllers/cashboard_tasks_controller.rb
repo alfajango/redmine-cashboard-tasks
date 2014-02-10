@@ -61,22 +61,57 @@ class CashboardTasksController < ApplicationController
       cashboard_project.cashboard_project_name = params[:cashboard_project_name]
     end
 
-    @issues.each do |issue|
-      if line_item = Cashboard::LineItem.create(
-        :project_id => params[:cashboard_project_id],
-        :project_list_id => project_list_id,
-        :title => issue.subject,
-        :quantity_high => issue.estimated_hours
-      )
-        CashboardTask.create!(
-          :issue_id => issue.id,
-          :cashboard_project_id => params[:cashboard_project_id],
-          :cashboard_project_list_id => project_list_id,
-          :cashboard_line_item_id => line_item.id
-        )
+    if params[:cashboard_as_combined_line_item]
+      grouped = @issues.group_by { |i| !!(i.estimated_hours && i.estimated_hours > 0) }.each do |has_estimated_hours, issues|
+        if issues.try(:any?)
+          line_item_options = Hash.new.tap do |opt|
+            opt[:project_id] = params[:cashboard_project_id]
+            opt[:project_list_id] = project_list_id
+            opt[:title] = "Tasks #{issues.collect(&:id).join(', ')}"
+            opt[:description] = issues.collect { |i| "\n* #{i.subject}" }.join('').strip
+            opt[:quantity_high] = issues.collect(&:estimated_hours).inject(:+) if has_estimated_hours
+          end
+          Rails.logger.info "LINE ITEM OPTIONS: "
+          Rails.logger.info line_item_options.inspect
+          line_item = Cashboard::LineItem.create(line_item_options)
+          issues.each do |issue|
+            CashboardTask.create!(
+              :issue_id => issue.id,
+              :cashboard_project_id => params[:cashboard_project_id],
+              :cashboard_project_list_id => project_list_id,
+              :cashboard_line_item_id => line_item.id
+            )
+          end
+        end
       end
+      Rails.logger.info "GROUP: "
+      Rails.logger.info grouped.inspect
+      if grouped[true].try(:any?) && grouped[false].try(:any?)
+        flash[:notice] = "Issues added as combined two tasks to Cashboard, one with aggregate estimate and one with no estimate."
+      elsif grouped[true].try(:any?)
+        flash[:notice] = "Issues added as combined task with aggregate estimate to Cashboard."
+      else
+        flash[:notice] = "Issues added as combined task with no estimate to Cashboard."
+      end
+    else
+      @issues.each do |issue|
+        if line_item = Cashboard::LineItem.create(
+          :project_id => params[:cashboard_project_id],
+          :project_list_id => project_list_id,
+          :title => issue.subject,
+          :quantity_high => issue.estimated_hours
+        )
+          CashboardTask.create!(
+            :issue_id => issue.id,
+            :cashboard_project_id => params[:cashboard_project_id],
+            :cashboard_project_list_id => project_list_id,
+            :cashboard_line_item_id => line_item.id
+          )
+        end
+      end
+      flash[:notice] = "Issues added as individual tasks to Cashboard."
     end
-    flash[:notice] = "Issues added as tasks to Cashboard."
+
     redirect_to project_issues_path(@project)
   end
 
