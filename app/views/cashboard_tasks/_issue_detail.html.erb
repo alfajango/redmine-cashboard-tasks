@@ -1,0 +1,5 @@
+<% if issue.cashboard_task %>
+  <tr>
+    <th>Cashboard Task</th><td><%= link_to issue.cashboard_task.cashboard_line_item_id, "https://#{ENV['CASHBOARD_SUBDOMAIN']}.cashboardapp.com/provider/projects/show/#{issue.cashboard_task.cashboard_project_id}#tasks/#{issue.cashboard_task.cashboard_line_item_id}", :target => :blank %></td>
+  </tr>
+<% end %>

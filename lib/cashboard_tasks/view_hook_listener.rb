@@ -4,5 +4,6 @@ module CashboardTasks
       stylesheet_link_tag 'cashboard_tasks', :plugin => :cashboard_tasks
     end
     render_on :view_issues_context_menu_end, :partial => "cashboard_tasks/context_menu"
+    render_on :view_issues_show_details_bottom, :partial => "cashboard_tasks/issue_detail"
   end
 end
