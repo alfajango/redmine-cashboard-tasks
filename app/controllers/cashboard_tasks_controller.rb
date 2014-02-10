@@ -1,11 +1,46 @@
 class CashboardTasksController < ApplicationController
   unloadable
 
-  before_filter :find_issues, :except => [:get_project_list, :get_projects]
+  before_filter :find_issues, :except => [:get_project_list, :get_projects, :get_line_items, :import_new, :import_create]
+  before_filter :find_project, :only => [:import_new, :import_create]
   before_filter :authenticate_cashboard
 
   def new
     @cashboard_project = @project.cashboard_project
+  end
+
+  def import_new
+    @cashboard_project = @project.cashboard_project
+  end
+
+  def import_create
+    # Only used if error causes #import_new to re-render
+    @cashboard_project = @project.cashboard_project
+
+    cashboard_line_items = Cashboard::LineItem.list(:query => {:project_list_id => params[:cashboard_project_list_id]})
+
+    cashboard_project = @project.cashboard_projects.where(:cashboard_project_id => params[:cashboard_project_id]).first_or_create do |cashboard_project|
+      cashboard_project.cashboard_project_name = params[:cashboard_project_name]
+    end
+
+    cashboard_line_items.select { |li| params[:cashboard_line_item_ids].include? li.id.to_s }.each do |li|
+      issue = @project.issues.create!(
+        :tracker_id => @project.trackers.first.id,
+        :author_id => User.current.id,
+        :subject => li.title,
+        :description => li.description,
+        :estimated_hours => li.quantity_high,
+        :due_date => li.due_date
+      )
+      issue.cashboard_tasks.create(
+        :cashboard_project_id => params[:cashboard_project_id],
+        :cashboard_project_list_id => params[:cashboard_project_list_id],
+        :cashboard_line_item_id => li.id
+      )
+    end
+
+    flash[:notice] = "Issues successfully imported from Cashboard."
+    redirect_to project_issues_path(@project)
   end
 
   def create
@@ -58,6 +93,12 @@ class CashboardTasksController < ApplicationController
     project_id = params[:cashboard_project_id]
     @cashboard_project_list = Cashboard::ProjectList.list(:query => {:project_id => project_id, :is_archived => false})
     render :json => @cashboard_project_list.map { |l| {:id => l.id, :title => l.title} }
+  end
+
+  def get_line_items
+    project_list_id = params[:cashboard_project_list_id]
+    @cashboard_line_items = Cashboard::LineItem.list(:query => {:project_list_id => project_list_id, :type_code => Cashboard::LineItem::TYPE_CODES[:task]})
+    render :json => @cashboard_line_items.map { |l| {:id => l.id, :title => l.title} }
   end
 
   private

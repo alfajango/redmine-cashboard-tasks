@@ -5,5 +5,6 @@ module CashboardTasks
     end
     render_on :view_issues_context_menu_end, :partial => "cashboard_tasks/context_menu"
     render_on :view_issues_show_details_bottom, :partial => "cashboard_tasks/issue_detail"
+    render_on :view_issues_sidebar_issues_bottom, :partial => "cashboard_tasks/issues_sidebar"
   end
 end
