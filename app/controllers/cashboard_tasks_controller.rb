@@ -68,7 +68,7 @@ class CashboardTasksController < ApplicationController
             opt[:project_id] = params[:cashboard_project_id]
             opt[:project_list_id] = project_list_id
             opt[:title] = "Tasks #{issues.collect(&:id).join(', ')}"
-            opt[:description] = issues.collect { |i| "\n* #{i.subject}" }.join('').strip
+            opt[:description] = issues.collect { |i| "\n* Task #{i.id}#{" (#{i.estimated_hours}hr)" if has_estimated_hours} - #{i.subject}" }.join('').strip
             opt[:quantity_high] = issues.collect(&:estimated_hours).inject(:+) if has_estimated_hours
           end
           Rails.logger.info "LINE ITEM OPTIONS: "
