@@ -1,7 +1,7 @@
 # CashboardTasks Redmine Plugin
 
 This Redmine plugin creates integration between the Redmine Issue
-tracking and Cashboard Project Lists and Tasks, including the ability to
+tracking and [Cashboard](http://cashboardapp.com/) Project Lists and Tasks, including the ability to
 add Redmine issues to Cashboard as tasks, as well as the ability to
 import Cashboard tasks to Redmine as issues.
 
@@ -19,3 +19,9 @@ cd /path/to/redmine
 git clone https://github.com/alfajango/redmine-cashboard-tasks.git plugins/cashboard_tasks
 rake redmine:plugins:migrate
 ```
+
+## TODO
+
+* Refactor CasboardTasksController and
+  CashboardTasks::ControllerHookListener.
+* Sync time entries between Redmine time tracker and Cashboard.
