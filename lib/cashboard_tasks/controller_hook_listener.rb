@@ -1,6 +1,14 @@
 module CashboardTasks
   class ContorllerHookListener < Redmine::Hook::ViewListener
     def controller_issues_new_after_save(context={})
+      create_cashboard_task(context)
+    end
+
+    def controller_issues_edit_after_save(context={})
+      create_cashboard_task(context)
+    end
+
+    def create_cashboard_task(context)
       issue = context[:issue]
       params = context[:params]
       @project = issue.project
