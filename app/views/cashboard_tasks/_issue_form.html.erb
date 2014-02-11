@@ -1,0 +1,12 @@
+<fieldset>
+  <p id="cashboard_form">
+    <label>Cashboard</label>
+    <%= link_to "Add to Cashboard", new_issue_form_cashboard_tasks_path(:id => @project), :data => {:remote => true, :method => :get, :type => :html}, :id => 'add_to_cashboard_link' %>
+    <%= link_to "Don't Add to Cashboard", '#', :id => 'remove_cashboard_link', :style => 'display: none' %>
+  </p>
+  <div id="add_to_cashboard_content" class="add_to_cashboard"></div>
+</fieldset>
+
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'cashboard_tasks', :plugin => 'cashboard_tasks' %>
+<% end %>

@@ -1,12 +1,17 @@
 class CashboardTasksController < ApplicationController
   unloadable
 
-  before_filter :find_issues, :except => [:get_project_list, :get_projects, :get_line_items, :import_new, :import_create]
-  before_filter :find_project, :only => [:import_new, :import_create]
+  before_filter :find_issues, :except => [:get_project_list, :get_projects, :get_line_items, :import_new, :import_create, :new_issue_form]
+  before_filter :find_project, :only => [:import_new, :import_create, :new_issue_form]
   before_filter :authenticate_cashboard
 
   def new
     @cashboard_project = @project.cashboard_project
+  end
+
+  def new_issue_form
+    @cashboard_project = @project.cashboard_project
+    render :layout => false
   end
 
   def import_new
@@ -71,8 +76,6 @@ class CashboardTasksController < ApplicationController
             opt[:description] = issues.collect { |i| "\n* Task #{i.id}#{" (#{i.estimated_hours}hr)" if has_estimated_hours} - #{i.subject}" }.join('').strip
             opt[:quantity_high] = issues.collect(&:estimated_hours).inject(:+) if has_estimated_hours
           end
-          Rails.logger.info "LINE ITEM OPTIONS: "
-          Rails.logger.info line_item_options.inspect
           line_item = Cashboard::LineItem.create(line_item_options)
           issues.each do |issue|
             CashboardTask.create!(
@@ -84,8 +87,6 @@ class CashboardTasksController < ApplicationController
           end
         end
       end
-      Rails.logger.info "GROUP: "
-      Rails.logger.info grouped.inspect
       if grouped[true].try(:any?) && grouped[false].try(:any?)
         flash[:notice] = "Issues added as combined two tasks to Cashboard, one with aggregate estimate and one with no estimate."
       elsif grouped[true].try(:any?)

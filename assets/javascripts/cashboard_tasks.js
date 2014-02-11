@@ -49,12 +49,16 @@ var updateCashboardLineItems = function(projectListId) {
   }
 };
 
-$(document).ready( function() {
+var setSavedProject = function() {
   savedProjectId = $('[data-saved-project-id]').val();
   savedProjectName = $('#cashboard_project_name').val();
   if (savedProjectId && savedProjectId !== '') {
     updateCashboardProjectLists(savedProjectId);
   }
+};
+
+$(document).ready( function() {
+  setSavedProject();
 });
 
 $(document).on('change', '#cashboard_project_id', function(){
@@ -73,7 +77,8 @@ $(document).on('change', '#cashboard_project_list_id', function(){
   updateCashboardLineItems(projectListId);
 });
 
-$(document).on('click', '#add-cashboard-project-select', function(){
+$(document).on('click', '#add-cashboard-project-select', function(e){
+  e.preventDefault();
   var $this = $(this),
       $select = $('[data-project-id]');
   if (!$select.data('fetched')) {
@@ -95,7 +100,8 @@ $(document).on('click', '#add-cashboard-project-select', function(){
   $('#remove-cashboard-project-select').show();
 });
 
-$(document).on('click', '#remove-cashboard-project-select', function(){
+$(document).on('click', '#remove-cashboard-project-select', function(e){
+  e.preventDefault();
   $('[data-project-id]').prop('disabled', true).hide();
   $(this).hide();
   $('#add-cashboard-project-select').show();
@@ -103,10 +109,25 @@ $(document).on('click', '#remove-cashboard-project-select', function(){
   updateCashboardProjectLists(savedProjectId);
 });
 
-$(document).on('click', '#check_all', function() {
+$(document).on('click', '#check_all', function(e) {
+  e.preventDefault();
   if ($(this).is(':checked')) {
     $('[data-line-item]').prop('checked', true);
   } else {
     $('[data-line-item]').prop('checked', false);
   }
+});
+
+$(document).on('ajax:success', '#add_to_cashboard_link', function(e, data, status, xhr) {
+  $('#add_to_cashboard_content').html(data);
+  setSavedProject();
+  $(this).hide();
+  $('#remove_cashboard_link').show();
+});
+
+$(document).on('click', '#remove_cashboard_link', function(e) {
+  e.preventDefault();
+  $('#add_to_cashboard_content').html('');
+  $('#add_to_cashboard_link').show();
+  $(this).hide();
 });
