@@ -1,0 +1,10 @@
+<p>
+  <label for="new_cashboard_project_list_name">or Create a New List</label>
+  <%= text_field_tag(:cashboard_project_list_title, '', :disabled => true, :placeholder => '(List name)') %>
+</p>
+<% if @issues.size > 1 %>
+  <p>
+    <label for="cashboard_as_combined_line_item">Add issues as combined Cashboard Task</label>
+    <%= check_box_tag(:cashboard_as_combined_line_item) %>
+  </p>
+<% end %>

@@ -1,9 +1,9 @@
 <%= title "Copy to Cashboard" %>
 
 <ul id="bulk-selection">
-<% @issues.each do |issue| %>
-  <%= content_tag 'li', link_to_issue(issue) %>
-<% end %>
+  <% @issues.each do |issue| %>
+    <%= content_tag 'li', link_to_issue(issue) %>
+  <% end %>
 </ul>
 
 <%= form_tag(cashboard_tasks_path, :id => 'cashboard_tasks_form') do %>
@@ -11,127 +11,24 @@
 
   <div class="box tabular">
     <fieldset class="attributes">
-    <legend>Cashboard Target</legend>
+      <legend>Cashboard Target</legend>
 
-    <div class="splitcontentleft">
-    <% if @issues.size > 1 %>
-      <p>
-        <label for="cashboard_as_combined_line_item">Add issues as combined Cashboard Task</label>
-        <%= check_box_tag(:cashboard_as_combined_line_item) %>
-      </p>
-    <% end %>
-    <p>
-      <label for="cashboard_project_id">Saved Cashboard Project</label>
-      <%= hidden_field_tag(:cashboard_project_id, @cashboard_project.try(:cashboard_project_id), :'data-saved-project-id' => true) %>
-      <%= hidden_field_tag(:cashboard_project_name, @cashboard_project.try(:cashboard_project_name)) %>
-      <%= @cashboard_project.try(:cashboard_project_name) || "(None saved)" %>
-    </p>
-    <p>
-      <label for="cashboard_project_id">or select a different Cashboard Project</label>
-      <%= link_to "select", "#", :id => 'add-cashboard-project-select' %>
-      <%= select_tag(:cashboard_project_id,
-                     content_tag('option', '(fetching projects from Cashboard...)', :value => ''),
-                     :disabled => true, :'data-project-id' => true, :style => 'display: none;') %>
-      <%= link_to "remove", "#", :id => 'remove-cashboard-project-select', :style => 'display: none' %>
-    </p>
-    <p>
-      <label for="cashboard_project_list_id">Cashboard Task List</label>
-      <%= select_tag(:cashboard_project_list_id, '', :disabled => true) %>
-    </p>
-    <p>
-      <label for="new_cashboard_project_list_name">or Create a New List</label>
-      <%= text_field_tag(:cashboard_project_list_title, '', :disabled => true, :placeholder => '(List name)') %>
-    </p>
-    </div>
+      <div class="splitcontentleft">
+        <%= render :partial => "cashboard_tasks/cashboard_fields" %>
+        <%= render :partial => "cashboard_tasks/cashboard_new_fields" %>
+      </div>
+    </fieldset>
 
     <div class="splitcontentright">
+    </div>
   </div>
 
   <p>
-    <% if @copy %>
-      <%= hidden_field_tag 'copy', '1' %>
-      <%= submit_tag l(:button_copy) %>
-      <%= submit_tag l(:button_copy_and_follow), :name => 'follow' %>
-    <% elsif @target_project %>
-      <%= submit_tag l(:button_move) %>
-      <%= submit_tag l(:button_move_and_follow), :name => 'follow' %>
-    <% else %>
-      <%= submit_tag l(:button_submit) %>
-    <% end %>
+    <%= submit_tag l(:button_submit) %>
   </p>
 
 <% end %>
 
-<%= javascript_tag do %>
-var savedProjectId,
-    savedProjectName;
-
-var updateCashboardProjectLists = function(projectId) {
-  if (projectId && projectId !== '') {
-    $.ajax({
-      url: '/cashboard_tasks/get_project_list',
-      dataType: 'json',
-      type: 'get',
-      data: {cashboard_project_id: projectId}
-    }).done(function(data) {
-      var options = $.map(data, function(list) {
-        return '<option value=' + list.id + '>' + list.title + '</option>';
-      });
-      $('#cashboard_project_list_id').html(options.join('')).prop('disabled', false);
-      $('#cashboard_project_list_title').prop('disabled', false);
-    });
-  } else {
-    $('#cashboard_project_list_id').html('').prop('disabled', true);
-    $('#cashboard_project_list_title').prop('disabled', true);
-  }
-};
-
-$(document).ready( function() {
-  savedProjectId = $('[data-saved-project-id]').val();
-  savedProjectName = $('#cashboard_project_name').val();
-  if (savedProjectId && savedProjectId !== '') {
-    updateCashboardProjectLists(savedProjectId);
-  }
-});
-
-$(document).on('change', '#cashboard_project_id', function(){
-  var $this = $(this), projectId = $this.val();
-  if (projectId && projectId !== '') {
-    $('#cashboard_project_name').val($this.find('option:selected').text());
-    updateCashboardProjectLists(projectId);
-  } else {
-    $('#cashboard_project_name').val(savedProjectName);
-    updateCashboardProjectLists(savedProjectId);
-  }
-});
-
-$(document).on('click', '#add-cashboard-project-select', function(){
-  var $this = $(this),
-      $select = $('[data-project-id]');
-  if (!$select.data('fetched')) {
-    $.ajax({
-      url: '/cashboard_tasks/get_projects',
-      dataType: 'json',
-      type: 'get'
-    }).done(function(data) {
-      var options = $.map(data, function(projects, client) {
-        return '<optgroup label="' + client + '">' + $.map(projects, function(project) {
-          return '<option value=' + project[1] + '>' + project[0] + '</option>';
-        }).join('') + '</optgroup>';
-      });
-      $select.html('<option value="">(select project)</option>' + options.join('')).data('fetched', true);
-    });
-  }
-  $this.hide();
-  $select.prop('disabled', false).show();
-  $('#remove-cashboard-project-select').show();
-});
-
-$(document).on('click', '#remove-cashboard-project-select', function(){
-  $('[data-project-id]').prop('disabled', true).hide();
-  $(this).hide();
-  $('#add-cashboard-project-select').show();
-  $('#cashboard_project_name').val(savedProjectName);
-  updateCashboardProjectLists(savedProjectId);
-});
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'cashboard_tasks', :plugin => 'cashboard_tasks' %>
 <% end %>

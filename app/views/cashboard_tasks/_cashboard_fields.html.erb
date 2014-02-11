@@ -1,0 +1,18 @@
+<p>
+  <label for="cashboard_project_id">Saved Cashboard Project</label>
+  <%= hidden_field_tag(:cashboard_project_id, @cashboard_project.try(:cashboard_project_id), :'data-saved-project-id' => true) %>
+  <%= hidden_field_tag(:cashboard_project_name, @cashboard_project.try(:cashboard_project_name)) %>
+  <%= @cashboard_project.try(:cashboard_project_name) || "(None saved)" %>
+</p>
+<p>
+  <label for="cashboard_project_id">or select a different Cashboard Project</label>
+  <%= link_to "select", "#", :id => 'add-cashboard-project-select' %>
+  <%= select_tag(:cashboard_project_id,
+                 content_tag('option', '(fetching projects from Cashboard...)', :value => ''),
+                 :disabled => true, :'data-project-id' => true, :style => 'display: none;') %>
+  <%= link_to "remove", "#", :id => 'remove-cashboard-project-select', :style => 'display: none' %>
+</p>
+<p>
+  <label for="cashboard_project_list_id">Cashboard Task List</label>
+  <%= select_tag(:cashboard_project_list_id, '', :disabled => true) %>
+</p>
