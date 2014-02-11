@@ -110,7 +110,6 @@ $(document).on('click', '#remove-cashboard-project-select', function(e){
 });
 
 $(document).on('click', '#check_all', function(e) {
-  e.preventDefault();
   if ($(this).is(':checked')) {
     $('[data-line-item]').prop('checked', true);
   } else {
