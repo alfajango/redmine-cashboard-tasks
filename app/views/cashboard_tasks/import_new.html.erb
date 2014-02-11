@@ -74,8 +74,9 @@ var updateCashboardLineItems = function(projectListId) {
       data: {cashboard_project_list_id: projectListId}
     }).done(function(data) {
       var options = $.map(data, function(item) {
-        return '<p><label><input type="checkbox" name="cashboard_line_item_ids[]" value=' + item.id + ' /> ' + item.title + '</label></p>';
+        return '<p><label><input type="checkbox" name="cashboard_line_item_ids[]" value=' + item.id + ' data-line-item /> ' + item.title + '</label></p>';
       });
+      options = ['<p><label><input type="checkbox" name="check_all" value="" id="check_all" /><em>(check all)</em></label></p><hr />'].concat(options);
       $('#cashboard_line_items_container').html(options.join(''));
     });
   } else {
@@ -135,5 +136,13 @@ $(document).on('click', '#remove-cashboard-project-select', function(){
   $('#add-cashboard-project-select').show();
   $('#cashboard_project_name').val(savedProjectName);
   updateCashboardProjectLists(savedProjectId);
+});
+
+$(document).on('click', '#check_all', function() {
+  if ($(this).is(':checked')) {
+    $('[data-line-item]').prop('checked', true);
+  } else {
+    $('[data-line-item]').prop('checked', false);
+  }
 });
 <% end %>
