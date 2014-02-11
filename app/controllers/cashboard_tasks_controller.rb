@@ -122,6 +122,8 @@ class CashboardTasksController < ApplicationController
       h[p.client_name] << [p.name, p.id]
       h
     end
+    # Sort by key name (Ruby 1.9 required for ordered hash)
+    @cashboard_projects = Hash[@cashboard_projects.sort_by {|k,v| k }]
     render :json => @cashboard_projects
   end
 
