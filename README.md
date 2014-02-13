@@ -25,6 +25,14 @@ git clone https://github.com/alfajango/redmine-cashboard-tasks.git plugins/cashb
 rake redmine:plugins:migrate
 ```
 
+Be sure to add the following environment variables to your Redmine
+server, and restart Redmine:
+
+```
+CASHBOARD_SUBDOMAIN=your_cashboard_subdomain
+CASHBOARD_API_KEY=your_cashboard_api_key
+```
+
 ## TODO
 
 * Refactor CasboardTasksController and
