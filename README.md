@@ -5,6 +5,11 @@ tracking and [Cashboard](http://cashboardapp.com/) Project Lists and Tasks, incl
 add Redmine issues to Cashboard as tasks, as well as the ability to
 import Cashboard tasks to Redmine as issues.
 
+## Documentation
+
+See docs at
+[os.alfajango.com/redmine-cashboard-tasks](http://os.alfajango.com/redmine-cashboard-tasks).
+
 ## Installation
 
 1. Copy the plugin directory into the plugins directory (make sure the name is cashboard_tasks)
