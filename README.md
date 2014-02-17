@@ -21,7 +21,7 @@ may add it as a submodule to Redmine:
 
 ```
 cd /path/to/redmine
-git clone https://github.com/alfajango/redmine-cashboard-tasks.git plugins/cashboard_tasks
+git submodule add https://github.com/alfajango/redmine-cashboard-tasks.git plugins/cashboard_tasks
 rake redmine:plugins:migrate
 ```
 
