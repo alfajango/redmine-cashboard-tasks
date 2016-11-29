@@ -99,7 +99,7 @@ class CashboardTasksController < ApplicationController
         if line_item = Cashboard::LineItem.create(
           :project_id => params[:cashboard_project_id],
           :project_list_id => project_list_id,
-          :title => issue.subject,
+          :title => [issue.id, issue.subject].join(' / '),
           :quantity_high => issue.estimated_hours
         )
           CashboardTask.create!(
