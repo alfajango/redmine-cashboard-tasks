@@ -37,11 +37,29 @@ class CashboardTasksController < ApplicationController
         :estimated_hours => li.quantity_high,
         :due_date => li.due_date
       )
+
       issue.cashboard_tasks.create(
         :cashboard_project_id => params[:cashboard_project_id],
         :cashboard_project_list_id => params[:cashboard_project_list_id],
         :cashboard_line_item_id => li.id
       )
+
+      cashboard_estimate_field = IssueCustomField.
+        where(name: "Cash Board Estimate").first
+
+      if cashboard_estimate_field.present?
+        cashboard_estimate_value = CustomValue.where(
+          customized_type: "Issue",
+          customized_id: issue.id,
+          custom_field_id: cashboard_estimate_field.id
+        ).first
+
+        if cashboard_estimate_value.present?
+          cashboard_estimate_value.update_attributes(
+            value: li.quantity_high
+          )
+        end
+      end
     end
 
     flash[:notice] = "Issues successfully imported from Cashboard."
