@@ -3,7 +3,7 @@ require_dependency 'cashboard_tasks/project_patch'
 require_dependency 'cashboard_tasks/view_hook_listener'
 require_dependency 'cashboard_tasks/controller_hook_listener'
 
-ActionDispatch::Callbacks.to_prepare do
+ActiveSupport::Reloader.to_prepare do
   # use require_dependency if you plan to utilize development mode
   require_dependency 'cashboard_tasks/helper_patch'
   # now we should include this module in ApplicationHelper module
