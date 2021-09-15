@@ -1,9 +1,9 @@
 class CashboardTasksController < ApplicationController
   unloadable
 
-  before_filter :find_issues, :except => [:get_project_list, :get_projects, :get_line_items, :import_new, :import_create, :new_issue_form]
-  before_filter :find_project, :only => [:import_new, :import_create, :new_issue_form]
-  before_filter :authenticate_cashboard
+  before_action :find_issues, :except => [:get_project_list, :get_projects, :get_line_items, :import_new, :import_create, :new_issue_form]
+  before_action :find_project, :only => [:import_new, :import_create, :new_issue_form]
+  before_action :authenticate_cashboard
 
   def new
     @cashboard_project = @project.cashboard_project
