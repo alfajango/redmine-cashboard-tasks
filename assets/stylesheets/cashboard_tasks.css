@@ -1,3 +1,5 @@
 .icon-cashboard {
   background-image: url(../images/icons/cashboard.png);
+  background-repeat: no-repeat;
+  background-position: left center;
 }
